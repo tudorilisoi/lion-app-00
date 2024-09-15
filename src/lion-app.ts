@@ -1,7 +1,8 @@
 import { LitElement, html, css } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
-
-const logo = new URL('../../assets/open-wc-logo.svg', import.meta.url).href;
+import { Router } from '@vaadin/router';
+import './login-view.js';
+import './home-view.js';
 
 @customElement('lion-app')
 export class LionApp extends LitElement {
@@ -50,25 +51,30 @@ export class LionApp extends LitElement {
     }
   `;
 
+  firstUpdated() {
+    // Type-safe access to the router's outlet (main container for route views)
+    const outlet = this.shadowRoot?.querySelector('#outlet') as HTMLElement;
+    const router = new Router(outlet);
+
+    // Define routes using the Router API
+    router.setRoutes([
+      { path: '/', component: 'home-view' },
+      { path: '/login', component: 'login-view' },
+      { path: '(.*)', component: 'not-found-view' }, // Catch-all route for 404 pages
+    ]);
+  }
+
   render() {
     return html`
-      <main>
-        <div class="logo"><img alt="open-wc logo" src=${logo} /></div>
-        <h1>${this.header}</h1>
-
-        <p>Edit <code>src/LionApp00.ts</code> and save to reload.</p>
-        <a
-          class="app-link"
-          href="https://open-wc.org/guides/developing-components/code-examples"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Code examples
-        </a>
-      </main>
-
+      <header>
+        <nav>
+          <a href="/" class="link">Home</a>
+          <a href="/login" class="link">Login</a>
+        </nav>
+      </header>
+      <main id="outlet"></main>
       <p class="app-footer">
-        🚽 Made with love by
+        Built with
         <a
           target="_blank"
           rel="noopener noreferrer"
